@@ -14,7 +14,7 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import MedicalRecords from './pages/MedicalRecords';
 import { ProtectedRoute, PublicRoute } from './components/AuthRoutes';
-import { useAuth, AuthProvider } from './context/AuthContext';
+import { useAuth } from './context/AuthContext';
 
 function AppLayout() {
   const { session } = useAuth();

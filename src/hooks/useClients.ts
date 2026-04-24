@@ -4,11 +4,11 @@ import { supabase } from '../lib/supabase';
 export interface Client {
   id: string;
   name: string;
-  tax_id: string;
-  phone: string;
-  email: string;
-  address: string;
-  notes: string;
+  tax_id: string | null;
+  phone: string | null;
+  email: string | null;
+  address: string | null;
+  notes: string | null;
   total_purchases: number;
 }
 

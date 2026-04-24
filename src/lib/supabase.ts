@@ -18,7 +18,7 @@ const createSupabaseClient = () => createClient(supabaseUrl, supabaseAnonKey, {
 
 // Avoid multiple instances during Vite HMR
 const globalForSupabase = globalThis as unknown as {
-  supabase: ReturnType<typeof createClient> | undefined;
+  supabase: any | undefined;
 };
 
 export const supabase = globalForSupabase.supabase ?? createSupabaseClient();
