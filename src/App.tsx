@@ -27,21 +27,28 @@ function AppLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 print:h-auto print:overflow-visible print:bg-white print:block">
+      {/* Mobile Sidebar Overlay & Drawer */}
       <div className={`
-        fixed inset-0 z-50 transition-transform duration-300 transform lg:relative lg:translate-x-0 print:hidden h-full sticky top-0
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        fixed inset-0 z-50 lg:hidden transition-opacity duration-300
+        ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
       `}>
-        {/* Overlay for mobile */}
-        {isSidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm lg:hidden" 
-            onClick={() => setIsSidebarOpen(false)}
-          />
-        )}
-        <div className="relative h-full">
+        <div 
+          className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" 
+          onClick={() => setIsSidebarOpen(false)}
+        />
+        <div className={`
+          absolute inset-y-0 left-0 w-64 transition-transform duration-300 transform
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}>
           <Sidebar onClose={() => setIsSidebarOpen(false)} />
         </div>
       </div>
+
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block w-64 h-full shrink-0 print:hidden">
+        <Sidebar />
+      </div>
+
       <div className="flex-1 flex flex-col h-screen overflow-hidden print:h-auto print:overflow-visible print:block relative">
         <div className="print:hidden shrink-0">
           <Header onMenuClick={toggleSidebar} />
