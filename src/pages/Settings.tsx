@@ -5,7 +5,6 @@ import {
   Database, 
   Download,
   Save,
-  Moon,
   ToggleLeft,
   ToggleRight,
   Building,
@@ -129,7 +128,6 @@ function Settings() {
   const menuItems = [
     { id: 'empresa', label: 'Dados da Empresa', icon: Building },
     { id: 'usuarios', label: 'Gestão de Usuários', icon: Shield },
-    { id: 'geral', label: 'Geral', icon: SettingsIcon },
     { id: 'dados', label: 'Dados & Backup', icon: Database },
   ];
 
@@ -292,26 +290,7 @@ function Settings() {
             </div>
           )}
 
-          {/* GERAL E DADOS */}
-          {activeTab === 'geral' && (
-             <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="border-b border-slate-100 pb-4">
-                <h3 className="text-xl font-bold text-slate-900">Preferências Gerais</h3>
-              </div>
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <div className="flex items-center gap-3">
-                  <Moon className="w-5 h-5 text-slate-400" />
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">Modo Escuro (Interface)</p>
-                    <p className="text-[10px] text-slate-500">Alternar tema da aplicação</p>
-                  </div>
-                </div>
-                <div className="w-12 h-6 bg-slate-200 rounded-full relative cursor-pointer">
-                  <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
-                </div>
-              </div>
-            </div>
-          )}
+
 
           {activeTab === 'dados' && (
             <div className="space-y-8 animate-in fade-in duration-300">
