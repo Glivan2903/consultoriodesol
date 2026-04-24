@@ -85,28 +85,28 @@ function Reports() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
+        <div className="bg-white p-4 md:p-6 rounded-3xl border border-slate-100 shadow-sm">
           <p className="text-slate-400 text-[10px] font-bold uppercase mb-1">Valor em Custo</p>
-          <p className="text-2xl font-black text-slate-900">R$ {totalStockValue.toLocaleString()}</p>
+          <p className="text-lg md:text-2xl font-black text-slate-900">R$ {totalStockValue.toLocaleString()}</p>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-4 md:p-6 rounded-3xl border border-slate-100 shadow-sm">
           <p className="text-slate-400 text-[10px] font-bold uppercase mb-1">Valor em Venda</p>
-          <p className="text-2xl font-black text-brand-primary">R$ {totalSaleValue.toLocaleString()}</p>
+          <p className="text-lg md:text-2xl font-black text-brand-primary">R$ {totalSaleValue.toLocaleString()}</p>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-4 md:p-6 rounded-3xl border border-slate-100 shadow-sm">
           <p className="text-slate-400 text-[10px] font-bold uppercase mb-1">Margem Projetada</p>
-          <p className="text-2xl font-black text-emerald-600">+{((totalSaleValue/totalStockValue - 1)*100).toFixed(1)}%</p>
+          <p className="text-lg md:text-2xl font-black text-emerald-600">+{((totalSaleValue/totalStockValue - 1)*100).toFixed(1)}%</p>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-4 md:p-6 rounded-3xl border border-slate-100 shadow-sm">
           <p className="text-slate-400 text-[10px] font-bold uppercase mb-1">Giro de Estoque</p>
-          <p className="text-2xl font-black text-amber-600">Médio</p>
+          <p className="text-lg md:text-2xl font-black text-amber-600">Médio</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Gráfico de Categorias */}
-        <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-4 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
           <div className="flex items-center gap-3 mb-8">
             <div className="bg-brand-primary/10 p-2.5 rounded-xl text-brand-primary">
               <FilePieChart className="w-5 h-5" />
@@ -144,7 +144,7 @@ function Reports() {
         </div>
 
         {/* Gráfico Top Saídas */}
-        <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-4 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
           <div className="flex items-center gap-3 mb-8">
             <div className="bg-amber-50 p-2.5 rounded-xl text-amber-600">
               <BarChart3 className="w-5 h-5" />

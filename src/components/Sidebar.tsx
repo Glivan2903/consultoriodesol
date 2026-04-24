@@ -12,7 +12,8 @@ import {
   Settings,
   Sun,
   LogOut,
-  ClipboardList
+  ClipboardList,
+  X
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -39,21 +40,30 @@ const menuItems: MenuItem[] = [
   { icon: Settings, label: 'Configurações', path: '/configuracoes', permission: 'settings' },
 ];
 
-function Sidebar() {
+function Sidebar({ onClose }: { onClose?: () => void }) {
   const { profile, signOut } = useAuth();
 
   const filteredItems = menuItems; // Todos têm acesso a tudo
 
   return (
     <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out border-r border-slate-800">
-      <div className="p-6 flex items-center gap-3">
-        <div className="w-10 h-10 bg-brand-secondary rounded-lg flex items-center justify-center shadow-lg shadow-orange-500/20">
-          <Sun className="text-white w-6 h-6 animate-pulse" />
+      <div className="p-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-brand-secondary rounded-lg flex items-center justify-center shadow-lg shadow-orange-500/20">
+            <Sun className="text-white w-6 h-6 animate-pulse" />
+          </div>
+          <div>
+            <h1 className="font-bold text-white text-lg leading-tight">Consultório</h1>
+            <p className="text-brand-secondary font-medium tracking-wider text-[10px] uppercase">de Sol</p>
+          </div>
         </div>
-        <div>
-          <h1 className="font-bold text-white text-lg leading-tight">Consultório</h1>
-          <p className="text-brand-secondary font-medium tracking-wider text-[10px] uppercase">de Sol</p>
-        </div>
+        
+        <button 
+          onClick={onClose}
+          className="lg:hidden p-2 hover:bg-slate-800 rounded-xl text-slate-400"
+        >
+          <X className="w-6 h-6" />
+        </button>
       </div>
 
       <nav className="flex-1 mt-4 px-3 space-y-1 overflow-y-auto">
@@ -61,6 +71,7 @@ function Sidebar() {
           <NavLink
             key={item.path}
             to={item.path}
+            onClick={onClose}
             className={({ isActive }) => 
               twMerge(
                 "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative",

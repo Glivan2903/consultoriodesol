@@ -135,7 +135,7 @@ export default function MedicalRecordForm({ initialData, client, onSave, onCance
             {settings?.phone || 'Telefone'} | {settings?.instagram || 'Instagram'} | <span className="text-blue-800 underline">{settings?.email || 'email@exemplo.com'}</span>
           </p>
           
-          <h2 className="text-left text-lg font-normal text-slate-900 mt-10 print:mt-6">PRONTUÁRIO</h2>
+          <h2 className="text-left text-lg font-normal text-slate-900 mt-4 md:mt-10 print:mt-6">PRONTUÁRIO</h2>
         </div>
 
         {/* 1. IDENTIFICAÇÃO DO PACIENTE */}
@@ -474,8 +474,8 @@ export default function MedicalRecordForm({ initialData, client, onSave, onCance
         {/* 9. SINAIS VITAIS */}
         <div className="print:break-inside-avoid">
           <SectionTitle number="9" title="SINAIS VITAIS" />
-          <div className="mb-8 overflow-x-auto print:mb-4">
-            <table className="w-full border-collapse border border-slate-300 text-sm text-center print:border-slate-400 print:text-[11px]">
+          <div className="mb-8 overflow-x-auto print:mb-4 border border-slate-200 rounded-2xl md:border-none">
+            <table className="w-full border-collapse border border-slate-300 text-sm text-center min-w-[600px] md:min-w-0 print:border-slate-400 print:text-[11px]">
               <thead>
                 <tr className="bg-slate-100 print:bg-transparent">
                   <th className="border border-slate-300 p-2 print:border-slate-400 print:p-1">Data</th>

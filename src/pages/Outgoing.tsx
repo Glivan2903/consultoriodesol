@@ -101,7 +101,7 @@ function Outgoing() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="lg:col-span-3 bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-          <div className="p-8 pb-4 flex items-center justify-between">
+          <div className="p-4 md:p-8 pb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-amber-50 p-2.5 rounded-xl text-amber-600">
                 <History className="w-5 h-5" />
@@ -188,7 +188,7 @@ function Outgoing() {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase">Quantidade *</label>
               <input 

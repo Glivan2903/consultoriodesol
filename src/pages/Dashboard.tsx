@@ -117,7 +117,7 @@ function Dashboard() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Cards de Resumo */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {cards.map((card, idx) => (
           <div key={idx} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-start mb-4">
@@ -138,7 +138,7 @@ function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Gráfico */}
-        <div className="lg:col-span-2 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+        <div className="lg:col-span-2 bg-white p-4 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-lg font-bold text-slate-900">Movimentação de Estoque</h3>
@@ -172,7 +172,7 @@ function Dashboard() {
         </div>
 
         {/* Alertas */}
-        <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-4 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-red-50 p-2.5 rounded-xl text-red-600">
               <AlertTriangle className="w-5 h-5" />
@@ -210,7 +210,7 @@ function Dashboard() {
 
       {/* Últimas Movimentações */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="p-8 pb-4 flex items-center justify-between">
+        <div className="p-4 md:p-8 pb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="bg-slate-100 p-2.5 rounded-xl text-slate-600">
               <Clock className="w-5 h-5" />
