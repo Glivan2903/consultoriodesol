@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // In Supabase v2, onAuthStateChange immediately fires an INITIAL_SESSION event
     // so we don't need to manually call getSession() and risk race conditions/locks.
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string, session: Session | null) => {
       console.log('[Auth] onAuthStateChange event:', event);
       setSession(session);
       setUser(session?.user ?? null);

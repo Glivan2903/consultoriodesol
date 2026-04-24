@@ -7,9 +7,10 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  size?: 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
 }
 
-export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export default function Modal({ isOpen, onClose, title, children, size = '2xl' }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
       {/* Content */}
       <div 
         ref={modalRef}
-        className="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden relative z-10 animate-in zoom-in-95 fade-in duration-300 border border-white/20"
+        className={`bg-white rounded-[2rem] shadow-2xl w-full max-w-${size} max-h-[90vh] overflow-hidden relative z-10 animate-in zoom-in-95 fade-in duration-300 border border-white/20`}
       >
         <div className="flex items-center justify-between p-8 pb-4 border-b border-slate-100">
           <h2 className="text-xl font-bold text-slate-900">{title}</h2>
