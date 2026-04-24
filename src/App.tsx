@@ -22,15 +22,15 @@ function AppLayout() {
   if (!session) return <Navigate to="/login" />;
 
   return (
-    <div className="flex min-h-screen bg-slate-50 print:bg-white print:block">
-      <div className="print:hidden h-full">
+    <div className="flex h-screen overflow-hidden bg-slate-50 print:h-auto print:overflow-visible print:bg-white print:block">
+      <div className="print:hidden h-full sticky top-0">
         <Sidebar />
       </div>
-      <div className="flex-1 flex flex-col print:block">
-        <div className="print:hidden">
+      <div className="flex-1 flex flex-col h-screen overflow-hidden print:h-auto print:overflow-visible print:block">
+        <div className="print:hidden shrink-0">
           <Header />
         </div>
-        <main className="p-4 md:p-8 flex-1 overflow-y-auto print:p-0 print:overflow-visible print:h-auto">
+        <main className="p-4 md:p-8 flex-1 overflow-y-auto print:p-0 print:overflow-visible print:h-auto custom-scrollbar">
           <Routes>
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/produtos" element={<ProtectedRoute><Products /></ProtectedRoute>} />
