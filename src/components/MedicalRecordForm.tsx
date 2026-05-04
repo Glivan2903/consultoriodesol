@@ -38,7 +38,8 @@ export default function MedicalRecordForm({ initialData, client, onSave, onCance
     sinais_vitais: initialData?.sinais_vitais || {
       pa: '', fc: '', fr: '', temp: '', spo2: '', obs: ''
     },
-    evolucao: initialData?.evolucao || ''
+    evolucao: initialData?.evolucao || '',
+    informacoes_adicionais: initialData?.informacoes_adicionais || ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -121,7 +122,7 @@ export default function MedicalRecordForm({ initialData, client, onSave, onCance
   return (
     <div className="flex flex-col h-full bg-slate-100 p-2 sm:p-6 overflow-y-auto custom-scrollbar print:bg-white print:p-0 print:overflow-visible">
       {/* Paper Sheet */}
-      <form id="medical-record-form" onSubmit={handleSubmit} className="bg-white max-w-4xl w-full mx-auto shadow-2xl border border-slate-200 p-8 md:p-14 mb-20 font-sans print:shadow-none print:border-none print:p-0 print:m-0 print:max-w-none">
+      <form id="medical-record-form" onSubmit={handleSubmit} className="bg-white max-w-4xl w-full mx-auto shadow-2xl border border-slate-200 p-4 md:p-14 mb-20 font-sans print:shadow-none print:border-none print:p-0 print:m-0 print:max-w-none">
         
         {/* Header */}
         <div className="text-center pb-6 mb-8 print:pb-4 print:mb-4">
@@ -151,15 +152,15 @@ export default function MedicalRecordForm({ initialData, client, onSave, onCance
               </div>
               <div className="flex items-end gap-2 flex-1">
                 <span className="text-sm font-bold text-slate-800 whitespace-nowrap">Data nasc:</span>
-                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">____/____/____</div>
+                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">{client?.birth_date || '____/____/____'}</div>
               </div>
               <div className="flex items-end gap-2 flex-1">
                 <span className="text-sm font-bold text-slate-800">Idade:</span>
-                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900"></div>
+                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">{client?.age || ''}</div>
               </div>
               <div className="flex items-end gap-2 flex-1">
                 <span className="text-sm font-bold text-slate-800">Profissão:</span>
-                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900"></div>
+                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">{client?.profession || ''}</div>
               </div>
             </div>
 
@@ -170,7 +171,7 @@ export default function MedicalRecordForm({ initialData, client, onSave, onCance
               </div>
               <div className="flex items-end gap-2 flex-1">
                 <span className="text-sm font-bold text-slate-800">Cidade:</span>
-                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900"></div>
+                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">{client?.city || ''}</div>
               </div>
               <div className="flex items-end gap-2 flex-1">
                 <span className="text-sm font-bold text-slate-800">Telefone:</span>
@@ -508,10 +509,22 @@ export default function MedicalRecordForm({ initialData, client, onSave, onCance
           <div className="mb-12 print:mb-0">
             <textarea 
               rows={10}
-              className="w-full border border-slate-300 bg-slate-50/50 p-4 text-sm outline-none focus:border-slate-800 leading-8 print:bg-transparent print:border-slate-400 print:text-[11px] print:p-2"
-              style={{ backgroundImage: 'linear-gradient(transparent, transparent 31px, #e2e8f0 31px)', backgroundSize: '100% 32px' }}
+              className="w-full border border-slate-300 bg-slate-50/50 p-4 text-sm outline-none focus:border-slate-800 print:bg-transparent print:border-slate-400 print:text-[11px] print:p-2"
               value={formData.evolucao}
               onChange={e => setFormData({...formData, evolucao: e.target.value})}
+            />
+          </div>
+        </div>
+
+        {/* 11. INFORMAÇÕES ADICIONAIS */}
+        <div className="print:break-inside-avoid">
+          <SectionTitle number="11" title="INFORMAÇÕES ADICIONAIS" />
+          <div className="mb-12 print:mb-0">
+            <textarea 
+              rows={6}
+              className="w-full border border-slate-300 bg-slate-50/50 p-4 text-sm outline-none focus:border-slate-800 print:bg-transparent print:border-slate-400 print:text-[11px] print:p-2"
+              value={formData.informacoes_adicionais}
+              onChange={e => setFormData({...formData, informacoes_adicionais: e.target.value})}
             />
           </div>
         </div>

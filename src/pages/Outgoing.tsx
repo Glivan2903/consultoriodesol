@@ -60,7 +60,7 @@ function Outgoing() {
     let finalDestination = formData.origin_destination;
     if (formData.type_entity === 'cliente') {
       const c = clients.find(cl => cl.id === formData.entity_id);
-      finalDestination = `Cliente: ${c?.name || 'Desconhecido'}`;
+      finalDestination = `Paciente: ${c?.name || 'Desconhecido'}`;
     } else if (formData.type_entity === 'empresa') {
       const comp = companies.find(c => c.id === formData.entity_id);
       finalDestination = `Empresa: ${comp?.name || 'Desconhecida'}`;
@@ -88,7 +88,7 @@ function Outgoing() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">Saída de Produtos</h2>
-          <p className="text-slate-500 text-sm">Registre baixas no estoque para clientes ou uso interno.</p>
+          <p className="text-slate-500 text-sm">Registre baixas no estoque para pacientes ou uso interno.</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
@@ -113,11 +113,11 @@ function Outgoing() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold tracking-widest border-y border-slate-100">
-                  <th className="px-8 py-4">Data</th>
-                  <th className="px-8 py-4">Produto</th>
-                  <th className="px-8 py-4">Qtd</th>
-                  <th className="px-8 py-4">Destino</th>
-                  <th className="px-8 py-4">Saldo Final</th>
+                  <th className="px-4 md:px-8 py-4">Data</th>
+                  <th className="px-4 md:px-8 py-4">Produto</th>
+                  <th className="px-4 md:px-8 py-4">Qtd</th>
+                  <th className="px-4 md:px-8 py-4 hidden md:table-cell">Destino</th>
+                  <th className="px-4 md:px-8 py-4 hidden lg:table-cell">Saldo Final</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -127,15 +127,15 @@ function Outgoing() {
                   <tr><td colSpan={5} className="p-8 text-center text-slate-400">Nenhuma saída registrada.</td></tr>
                 ) : outgoingMoves.map((move) => (
                   <tr key={move.id} onClick={() => { setSelectedMove(move); setEditData(move); }} className="hover:bg-slate-50/80 transition-colors cursor-pointer group">
-                    <td className="px-8 py-4 text-xs font-medium text-slate-500">
+                    <td className="px-4 md:px-8 py-4 text-xs font-medium text-slate-500">
                       {new Date(move.created_at).toLocaleDateString()}
                     </td>
-                    <td className="px-8 py-4 font-bold text-slate-900">{move.product?.name}</td>
-                    <td className="px-8 py-4 font-mono font-bold text-amber-600">
+                    <td className="px-4 md:px-8 py-4 font-bold text-slate-900">{move.product?.name}</td>
+                    <td className="px-4 md:px-8 py-4 font-mono font-bold text-amber-600">
                       -{Number(move.quantity).toString()} <span className="text-xs text-slate-400 font-sans">{move.product?.unit}</span>
                     </td>
-                    <td className="px-8 py-4 text-sm text-slate-500">{move.origin_destination}</td>
-                    <td className="px-8 py-4">
+                    <td className="px-4 md:px-8 py-4 text-sm text-slate-500 hidden md:table-cell">{move.origin_destination}</td>
+                    <td className="px-4 md:px-8 py-4 hidden lg:table-cell">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-bold text-slate-400">{move.balance_before}</span>
                         <ArrowRight className="w-3 h-3 text-slate-300" />
@@ -213,7 +213,7 @@ function Outgoing() {
                       formData.type_entity === t ? 'bg-white text-brand-primary shadow-sm' : 'text-slate-400'
                     }`}
                   >
-                    {t}
+                    {t === 'cliente' ? 'paciente' : t}
                   </button>
                 ))}
               </div>
@@ -232,7 +232,7 @@ function Outgoing() {
                     value={formData.entity_id}
                     onChange={e => setFormData({...formData, entity_id: e.target.value})}
                   >
-                    <option value="">Selecionar Cliente...</option>
+                    <option value="">Selecionar Paciente...</option>
                     {clients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </>

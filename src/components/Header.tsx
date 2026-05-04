@@ -8,7 +8,7 @@ const pathLabels: Record<string, string> = {
   '/categorias': 'Categorias',
   '/entradas': 'Entrada de Produtos',
   '/saidas': 'Saída de Produtos',
-  '/clientes': 'Gestão de Clientes',
+  '/clientes': 'Gestão de Pacientes',
   '/empresas': 'Gestão de Empresas',
   '/movimentacoes': 'Log de Movimentações',
   '/relatorios': 'Relatórios & BI',

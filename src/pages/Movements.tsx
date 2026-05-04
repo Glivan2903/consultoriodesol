@@ -117,12 +117,12 @@ function Movements() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold tracking-widest border-y border-slate-100">
-                <th className="px-8 py-5">Data/Hora</th>
-                <th className="px-8 py-5">Produto</th>
-                <th className="px-8 py-5">Tipo</th>
-                <th className="px-8 py-5">Quantidade</th>
-                <th className="px-8 py-5">Origem/Destino</th>
-                <th className="px-8 py-5">Saldos (Ant &gt; Atual)</th>
+                <th className="px-4 md:px-8 py-5">Data/Hora</th>
+                <th className="px-4 md:px-8 py-5">Produto</th>
+                <th className="px-4 md:px-8 py-5">Tipo</th>
+                <th className="px-4 md:px-8 py-5">Qtd</th>
+                <th className="px-4 md:px-8 py-5 hidden md:table-cell">Origem/Destino</th>
+                <th className="px-4 md:px-8 py-5 hidden lg:table-cell">Saldos</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -137,14 +137,14 @@ function Movements() {
                 </tr>
               ) : filtered.map((m) => (
                 <tr key={m.id} onClick={() => setSelectedMove(m)} className="hover:bg-slate-50/80 transition-colors cursor-pointer group">
-                  <td className="px-8 py-5">
+                  <td className="px-4 md:px-8 py-5">
                     <div className="flex flex-col">
                       <span className="text-sm font-bold text-slate-900">{new Date(m.created_at).toLocaleDateString()}</span>
                       <span className="text-[10px] text-slate-400">{new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                   </td>
-                  <td className="px-8 py-5 font-bold text-slate-900 text-sm">{m.product?.name}</td>
-                  <td className="px-8 py-5">
+                  <td className="px-4 md:px-8 py-5 font-bold text-slate-900 text-sm">{m.product?.name}</td>
+                  <td className="px-4 md:px-8 py-5">
                     {m.type === 'entrada' ? (
                       <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-lg">
                         <ArrowDownLeft className="w-3 h-3" />
@@ -157,14 +157,14 @@ function Movements() {
                       </div>
                     )}
                   </td>
-                  <td className="px-8 py-5">
+                  <td className="px-4 md:px-8 py-5">
                     <span className={`text-sm font-black ${m.type === 'entrada' ? 'text-emerald-600' : 'text-amber-600'}`}>
                       {m.type === 'entrada' ? '+' : '-'}{m.quantity}
                     </span>
                     <span className="text-[10px] text-slate-400 ml-1 uppercase">{m.product?.unit}</span>
                   </td>
-                  <td className="px-8 py-5 text-sm text-slate-500">{m.origin_destination}</td>
-                  <td className="px-8 py-5">
+                  <td className="px-4 md:px-8 py-5 text-sm text-slate-500 hidden md:table-cell">{m.origin_destination}</td>
+                  <td className="px-4 md:px-8 py-5">
                     <div className="flex items-center gap-2">
                       <span className="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-mono text-slate-400">{m.balance_before}</span>
                       <ArrowRight className="w-3 h-3 text-slate-300" />

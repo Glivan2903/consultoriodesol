@@ -10,6 +10,10 @@ export interface Client {
   address: string | null;
   notes: string | null;
   total_purchases: number;
+  birth_date: string | null;
+  age: string | null;
+  profession: string | null;
+  city: string | null;
 }
 
 export function useClients() {
@@ -50,16 +54,18 @@ export function useClients() {
     
     try {
       // First, try the insert
-      const { error: insertError } = await supabase
+      const { data, error: insertError } = await supabase
         .from('inventory_clients')
-        .insert([client]);
+        .insert([client])
+        .select()
+        .single();
       
       if (insertError) {
         console.error('[useClients] Supabase Insert Error:', insertError);
         throw insertError;
       }
       
-      console.log('[useClients] Insert success');
+      console.log('[useClients] Insert success', data);
       
       // Try to refresh the list, but don't crash if it fails
       try {
@@ -67,6 +73,8 @@ export function useClients() {
       } catch (fetchErr) {
         console.warn('[useClients] Post-insert fetch failed, but data was saved:', fetchErr);
       }
+
+      return data as Client;
     } catch (err: any) {
       console.error('[useClients] addClient error:', err);
       throw err;

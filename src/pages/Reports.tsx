@@ -175,23 +175,23 @@ function Reports() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold tracking-widest border-y border-slate-100">
-                <th className="px-8 py-5">Item</th>
-                <th className="px-8 py-5">Categoria</th>
-                <th className="px-8 py-5">Disp.</th>
-                <th className="px-8 py-5">V. Custo Total</th>
-                <th className="px-8 py-5">V. Venda Total</th>
-                <th className="px-8 py-5 text-right">Status</th>
+                <th className="px-4 md:px-8 py-5">Item</th>
+                <th className="px-4 md:px-8 py-5 hidden md:table-cell">Categoria</th>
+                <th className="px-4 md:px-8 py-5">Disp.</th>
+                <th className="px-4 md:px-8 py-5 hidden lg:table-cell">V. Custo Total</th>
+                <th className="px-4 md:px-8 py-5 hidden sm:table-cell">V. Venda Total</th>
+                <th className="px-4 md:px-8 py-4 md:py-5 text-right">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {products.map((p) => (
                 <tr key={p.id} className="text-sm">
-                  <td className="px-8 py-5 font-bold text-slate-900">{p.name}</td>
-                  <td className="px-8 py-5 text-slate-500">{p.category?.name || 'N/A'}</td>
-                  <td className="px-8 py-5 font-mono">{p.stock_current} {p.unit}</td>
-                  <td className="px-8 py-5 text-slate-400">R$ {(p.stock_current * p.cost_price).toFixed(2)}</td>
-                  <td className="px-8 py-5 font-bold text-brand-primary">R$ {(p.stock_current * p.sale_price).toFixed(2)}</td>
-                  <td className="px-8 py-5 text-right">
+                  <td className="px-4 md:px-8 py-5 font-bold text-slate-900">{p.name}</td>
+                  <td className="px-4 md:px-8 py-5 text-slate-500 hidden md:table-cell">{p.category?.name || 'N/A'}</td>
+                  <td className="px-4 md:px-8 py-5 font-mono">{p.stock_current} {p.unit}</td>
+                  <td className="px-4 md:px-8 py-5 text-slate-400 hidden lg:table-cell">R$ {(p.stock_current * p.cost_price).toFixed(2)}</td>
+                  <td className="px-4 md:px-8 py-5 font-bold text-brand-primary hidden sm:table-cell">R$ {(p.stock_current * p.sale_price).toFixed(2)}</td>
+                  <td className="px-4 md:px-8 py-5 text-right">
                     {p.stock_current <= p.stock_min ? (
                       <span className="text-red-500 font-bold text-[10px] uppercase">Repor Imediato</span>
                     ) : (

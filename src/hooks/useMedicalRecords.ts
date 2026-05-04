@@ -38,6 +38,7 @@ export interface MedicalRecord {
     obs: string;
   };
   evolucao: string;
+  informacoes_adicionais?: string;
   created_at: string;
 }
 

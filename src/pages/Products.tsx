@@ -117,13 +117,13 @@ function Products() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold tracking-widest border-y border-slate-100">
-                <th className="px-8 py-5">Produto</th>
-                <th className="px-8 py-5">Categoria</th>
-                <th className="px-8 py-5">Stock Atual</th>
-                <th className="px-8 py-5">Est. Mínimo</th>
-                <th className="px-8 py-5">Custo/Venda</th>
-                <th className="px-8 py-5">Status</th>
-                <th className="px-8 py-5 text-right">Ações</th>
+                <th className="px-4 md:px-8 py-4 md:py-5">Produto</th>
+                <th className="px-4 md:px-8 py-4 md:py-5 hidden lg:table-cell">Categoria</th>
+                <th className="px-4 md:px-8 py-4 md:py-5">Stock</th>
+                <th className="px-4 md:px-8 py-4 md:py-5 hidden sm:table-cell">Est. Mín</th>
+                <th className="px-4 md:px-8 py-4 md:py-5 hidden md:table-cell">Custo/Venda</th>
+                <th className="px-4 md:px-8 py-4 md:py-5 hidden xl:table-cell">Status</th>
+                <th className="px-4 md:px-8 py-4 md:py-5 text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -146,7 +146,7 @@ function Products() {
                 const isLowStock = product.stock_current <= product.stock_min;
                 return (
                   <tr key={product.id} className="hover:bg-slate-50/80 transition-colors group">
-                    <td className="px-8 py-5">
+                    <td className="px-4 md:px-8 py-4 md:py-5">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 overflow-hidden border border-slate-200">
                           {product.image_url ? (
@@ -161,12 +161,12 @@ function Products() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-5">
+                    <td className="px-4 md:px-8 py-4 md:py-5 hidden lg:table-cell">
                       <span className="text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-medium">
                         {product.category?.name || 'Geral'}
                       </span>
                     </td>
-                    <td className="px-8 py-5">
+                    <td className="px-4 md:px-8 py-4 md:py-5">
                       <div className="flex flex-col">
                         <span className={`text-sm font-bold ${isLowStock ? 'text-red-600' : 'text-slate-900'}`}>
                           {product.stock_current} {product.unit}
@@ -178,23 +178,23 @@ function Products() {
                         )}
                       </div>
                     </td>
-                    <td className="px-8 py-5 text-sm text-slate-500 font-medium">
+                    <td className="px-4 md:px-8 py-4 md:py-5 text-sm text-slate-500 font-medium hidden sm:table-cell">
                       {product.stock_min} {product.unit}
                     </td>
-                    <td className="px-8 py-5">
+                    <td className="px-4 md:px-8 py-4 md:py-5 hidden md:table-cell">
                       <div className="text-xs">
                         <p className="text-slate-400 mb-0.5">C: {formatBRL(product.cost_price)}</p>
                         <p className="text-brand-primary font-bold">V: {formatBRL(product.sale_price)}</p>
                       </div>
                     </td>
-                    <td className="px-8 py-5">
+                    <td className="px-4 md:px-8 py-4 md:py-5 hidden xl:table-cell">
                       <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase ${
                         product.status === 'ativo' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'
                       }`}>
                         {product.status}
                       </span>
                     </td>
-                    <td className="px-8 py-5 text-right">
+                    <td className="px-4 md:px-8 py-4 md:py-5 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-brand-primary transition-all">
                           <Eye className="w-4 h-4" />

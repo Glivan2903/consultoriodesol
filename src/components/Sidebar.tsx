@@ -32,7 +32,7 @@ const menuItems: MenuItem[] = [
   { icon: Tags, label: 'Categorias', path: '/categorias', permission: 'categories' },
   { icon: ArrowDownLeft, label: 'Entradas', path: '/entradas', permission: 'incoming' },
   { icon: ArrowUpRight, label: 'Saídas', path: '/saidas', permission: 'outgoing' },
-  { icon: Users, label: 'Clientes', path: '/clientes', permission: 'clients' },
+  { icon: Users, label: 'Pacientes', path: '/clientes', permission: 'clients' },
   { icon: Building2, label: 'Empresas', path: '/empresas', permission: 'companies' },
   { icon: History, label: 'Movimentações', path: '/movimentacoes', permission: 'movements' },
   { icon: FileBarChart, label: 'Relatórios', path: '/relatorios', permission: 'reports' },

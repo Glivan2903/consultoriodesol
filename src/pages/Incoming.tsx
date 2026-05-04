@@ -82,12 +82,12 @@ function Incoming() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold tracking-widest border-y border-slate-100">
-                  <th className="px-8 py-4">Data</th>
-                  <th className="px-8 py-4">Produto</th>
-                  <th className="px-8 py-4">Qtd</th>
-                  <th className="px-8 py-4">Valor Unit.</th>
-                  <th className="px-8 py-4">Fornecedor</th>
-                  <th className="px-8 py-4">Saldo Final</th>
+                  <th className="px-4 md:px-8 py-4">Data</th>
+                  <th className="px-4 md:px-8 py-4">Produto</th>
+                  <th className="px-4 md:px-8 py-4">Qtd</th>
+                  <th className="px-4 md:px-8 py-4 hidden sm:table-cell">Valor Unit.</th>
+                  <th className="px-4 md:px-8 py-4 hidden md:table-cell">Fornecedor</th>
+                  <th className="px-4 md:px-8 py-4 hidden lg:table-cell">Saldo Final</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -97,16 +97,16 @@ function Incoming() {
                   <tr><td colSpan={6} className="p-8 text-center text-slate-400">Nenhuma entrada registrada.</td></tr>
                 ) : incomingMoves.map((move) => (
                   <tr key={move.id} onClick={() => { setSelectedMove(move); setEditData(move); }} className="hover:bg-slate-50/80 transition-colors cursor-pointer group">
-                    <td className="px-8 py-4 text-xs font-medium text-slate-500">
+                    <td className="px-4 md:px-8 py-4 text-xs font-medium text-slate-500">
                       {new Date(move.created_at).toLocaleDateString()}
                     </td>
-                    <td className="px-8 py-4 font-bold text-slate-900">{move.product?.name}</td>
-                    <td className="px-8 py-4 font-mono font-bold text-emerald-600">+{Number(move.quantity).toString()} <span className="text-xs text-slate-400 font-sans">{move.product?.unit}</span></td>
-                    <td className="px-8 py-4 text-sm text-slate-600">
+                    <td className="px-4 md:px-8 py-4 font-bold text-slate-900">{move.product?.name}</td>
+                    <td className="px-4 md:px-8 py-4 font-mono font-bold text-emerald-600">+{Number(move.quantity).toString()} <span className="text-xs text-slate-400 font-sans">{move.product?.unit}</span></td>
+                    <td className="px-4 md:px-8 py-4 text-sm text-slate-600 hidden sm:table-cell">
                       {move.value_unit > 0 ? `R$ ${move.value_unit.toFixed(2)}` : '-'}
                     </td>
-                    <td className="px-8 py-4 text-sm text-slate-500">{move.origin_destination}</td>
-                    <td className="px-8 py-4">
+                    <td className="px-4 md:px-8 py-4 text-sm text-slate-500 hidden md:table-cell">{move.origin_destination}</td>
+                    <td className="px-4 md:px-8 py-4 hidden lg:table-cell">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-bold text-slate-400">{move.balance_before}</span>
                         <ArrowRight className="w-3 h-3 text-slate-300" />

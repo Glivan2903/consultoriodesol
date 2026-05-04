@@ -117,9 +117,9 @@ function Dashboard() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Cards de Resumo */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
         {cards.map((card, idx) => (
-          <div key={idx} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+          <div key={idx} className="bg-white p-4 md:p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-start mb-4">
               <div className={`${card.bg} ${card.color} p-3 rounded-2xl`}>
                 <card.icon className="w-6 h-6" />
@@ -222,11 +222,11 @@ function Dashboard() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold tracking-widest border-y border-slate-100">
-                <th className="px-8 py-4">Produto</th>
-                <th className="px-8 py-4">Tipo</th>
-                <th className="px-8 py-4">Quantidade</th>
-                <th className="px-8 py-4">Origem/Destino</th>
-                <th className="px-8 py-4 text-right">Data</th>
+                <th className="px-4 md:px-8 py-4">Produto</th>
+                <th className="px-4 md:px-8 py-4">Tipo</th>
+                <th className="px-4 md:px-8 py-4">Quantidade</th>
+                <th className="px-4 md:px-8 py-4 hidden md:table-cell">Origem/Destino</th>
+                <th className="px-4 md:px-8 py-4 text-right">Data</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -239,17 +239,17 @@ function Dashboard() {
               ) : (
                 latestMovements.map((move) => (
                   <tr key={move.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-8 py-4 font-bold text-slate-900 text-sm">{move.product}</td>
-                    <td className="px-8 py-4">
+                    <td className="px-4 md:px-8 py-4 font-bold text-slate-900 text-sm">{move.product}</td>
+                    <td className="px-4 md:px-8 py-4">
                       <span className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase ${
                         move.type === 'entrada' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
                       }`}>
                         {move.type}
                       </span>
                     </td>
-                    <td className="px-8 py-4 font-mono font-bold text-slate-600">{move.qty}</td>
-                    <td className="px-8 py-4 text-slate-500 text-xs">{move.source}</td>
-                    <td className="px-8 py-4 text-right text-slate-400 text-xs">{move.date}</td>
+                    <td className="px-4 md:px-8 py-4 font-mono font-bold text-slate-600">{move.qty}</td>
+                    <td className="px-4 md:px-8 py-4 text-slate-500 text-xs hidden md:table-cell">{move.source}</td>
+                    <td className="px-4 md:px-8 py-4 text-right text-slate-400 text-xs">{move.date}</td>
                   </tr>
                 ))
               )}
