@@ -96,7 +96,18 @@ export default function MedicalRecords() {
   };
 
   const handleOpenCreateClient = () => {
-    setClientFormData({ name: '', tax_id: '', phone: '', email: '', address: '', notes: '' });
+    setClientFormData({ 
+      name: '', 
+      tax_id: '', 
+      phone: '', 
+      email: '', 
+      address: '', 
+      notes: '', 
+      birth_date: '', 
+      age: '', 
+      profession: '', 
+      city: '' 
+    });
     setIsClientModalOpen(true);
   };
 
