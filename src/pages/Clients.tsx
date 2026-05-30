@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
-import { 
-  Plus, 
-  Search, 
-  User, 
+import {
+  Plus,
+  Search,
+  User,
   Users,
   Phone,
   Mail,
@@ -29,13 +29,18 @@ function Clients() {
 
   const [selectedClientForDetails, setSelectedClientForDetails] = useState<Client | null>(null);
   const [isMovementsModalOpen, setIsMovementsModalOpen] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     tax_id: '',
     phone: '',
     email: '',
     address: '',
+    zip_code: '',
+    street: '',
+    number: '',
+    neighborhood: '',
+    state: '',
     notes: '',
     birth_date: '',
     age: '',
@@ -43,10 +48,10 @@ function Clients() {
     city: ''
   });
 
-  const filtered = useMemo(() => 
-    clients.filter(c => (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-                      (c.tax_id && c.tax_id.includes(searchTerm))),
-  [clients, searchTerm]);
+  const filtered = useMemo(() =>
+    clients.filter(c => (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (c.tax_id && c.tax_id.includes(searchTerm))),
+    [clients, searchTerm]);
 
   const handleOpenEdit = (c: Client) => {
     setEditingClient(c);
@@ -56,6 +61,11 @@ function Clients() {
       phone: c.phone || '',
       email: c.email || '',
       address: c.address || '',
+      zip_code: c.zip_code || '',
+      street: c.street || '',
+      number: c.number || '',
+      neighborhood: c.neighborhood || '',
+      state: c.state || '',
       notes: c.notes || '',
       birth_date: c.birth_date || '',
       age: c.age || '',
@@ -67,14 +77,14 @@ function Clients() {
 
   const handleOpenCreate = () => {
     setEditingClient(null);
-    setFormData({ name: '', tax_id: '', phone: '', email: '', address: '', notes: '', birth_date: '', age: '', profession: '', city: '' });
+    setFormData({ name: '', tax_id: '', phone: '', email: '', address: '', zip_code: '', street: '', number: '', neighborhood: '', state: '', notes: '', birth_date: '', age: '', profession: '', city: '' });
     setIsModalOpen(true);
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     console.log('[Clients] handleSubmit called. Editing:', !!editingClient, formData);
-    
+
     // Clean data: empty strings to null for optional fields
     const dataToSave = {
       ...formData,
@@ -82,6 +92,11 @@ function Clients() {
       phone: formData.phone?.trim() || null,
       email: formData.email?.trim() || null,
       address: formData.address?.trim() || null,
+      zip_code: formData.zip_code?.trim() || null,
+      street: formData.street?.trim() || null,
+      number: formData.number?.trim() || null,
+      neighborhood: formData.neighborhood?.trim() || null,
+      state: formData.state?.trim() || null,
       notes: formData.notes?.trim() || null,
       birth_date: formData.birth_date?.trim() || null,
       age: formData.age?.trim() || null,
@@ -95,7 +110,7 @@ function Clients() {
         showSuccess('Paciente Atualizado', 'Os dados do paciente foram salvos.');
       } else {
         await addClient(dataToSave as any);
-        setFormData({ name: '', tax_id: '', phone: '', email: '', address: '', notes: '', birth_date: '', age: '', profession: '', city: '' });
+        setFormData({ name: '', tax_id: '', phone: '', email: '', address: '', zip_code: '', street: '', number: '', neighborhood: '', state: '', notes: '', birth_date: '', age: '', profession: '', city: '' });
         showSuccess('Paciente Salvo', 'O novo paciente foi adicionado.');
       }
       setIsModalOpen(false);
@@ -111,7 +126,7 @@ function Clients() {
     let formatted = digits;
     if (digits.length > 2) formatted = `${digits.slice(0, 2)}/${digits.slice(2)}`;
     if (digits.length > 4) formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
-    
+
     let age = formData.age;
     if (formatted.length === 10) {
       const [d, m, y] = formatted.split('/').map(Number);
@@ -126,12 +141,41 @@ function Clients() {
         age = calculatedAge >= 0 ? `${calculatedAge} anos` : '';
       }
     }
-    
+
     setFormData({
       ...formData,
       birth_date: formatted,
       age: age
     });
+  };
+
+  const handleCepSearch = async (cep: string) => {
+    const cleanCep = cep.replace(/\D/g, '');
+    setFormData(prev => ({ ...prev, zip_code: cleanCep }));
+
+    if (cleanCep.length === 8) {
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await response.json();
+
+        if (!data.erro) {
+          setFormData(prev => ({
+            ...prev,
+            street: data.logradouro || prev.street,
+            neighborhood: data.bairro || prev.neighborhood,
+            city: data.localidade || prev.city,
+            state: data.uf || prev.state,
+          }));
+
+          // Focar no campo de número após preencher os dados
+          setTimeout(() => {
+            document.getElementById('numero-input')?.focus();
+          }, 100);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
+      }
+    }
   };
 
   return (
@@ -141,7 +185,7 @@ function Clients() {
           <h2 className="text-2xl font-bold text-slate-900">Gestão de Pacientes</h2>
           <p className="text-slate-500 text-sm">Pacientes e compradores frequentes do consultório.</p>
         </div>
-        <button 
+        <button
           onClick={handleOpenCreate}
           className="flex items-center gap-2 bg-brand-primary text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover:scale-105 active:scale-95 transition-all"
         >
@@ -153,9 +197,9 @@ function Clients() {
       <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
         <div className="relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-brand-primary" />
-          <input 
-            type="text" 
-            placeholder="Buscar por nome ou CPF..." 
+          <input
+            type="text"
+            placeholder="Buscar por nome ou CPF..."
             className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-brand-primary/20 transition-all outline-none"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -200,7 +244,7 @@ function Clients() {
                       </div>
                       <div>
                         <p className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors">{c.name}</p>
-                        <p className="text-[10px] text-slate-400 max-w-[200px] truncate">{c.address || 'Sem endereço'}</p>
+                        <p className="text-[10px] text-slate-400 max-w-[200px] truncate">{c.street ? `${c.street}, ${c.number || 'S/N'} - ${c.neighborhood || ''}` : (c.address || 'Sem endereço')}</p>
                       </div>
                     </div>
                   </td>
@@ -226,7 +270,7 @@ function Clients() {
                   </td>
                   <td className="px-4 md:px-8 py-4 md:py-5 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button 
+                      <button
                         onClick={() => {
                           navigate(`/prontuarios/${c.id}`);
                         }}
@@ -235,7 +279,7 @@ function Clients() {
                       >
                         <ClipboardList className="w-4 h-4" />
                       </button>
-                      <button 
+                      <button
                         onClick={() => {
                           navigate(`/prontuarios/${c.id}?action=new`);
                         }}
@@ -244,7 +288,7 @@ function Clients() {
                       >
                         <Plus className="w-4 h-4" />
                       </button>
-                      <button 
+                      <button
                         onClick={() => {
                           setSelectedClientForDetails(c);
                           setIsMovementsModalOpen(true);
@@ -254,14 +298,14 @@ function Clients() {
                       >
                         <History className="w-4 h-4" />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleOpenEdit(c)}
                         title="Editar Paciente"
                         className="p-2 hover:bg-amber-50 text-slate-400 hover:text-amber-600 rounded-lg transition-colors"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
-                      <button 
+                      <button
                         onClick={() => {
                           confirmAction('Excluir Paciente', `Tem certeza que deseja excluir o paciente ${c.name}?`, async () => {
                             await deleteClient(c.id);
@@ -282,8 +326,8 @@ function Clients() {
         </div>
       </div>
 
-      <Modal 
-        isOpen={isModalOpen} 
+      <Modal
+        isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={editingClient ? 'Editar Paciente' : 'Novo Paciente'}
       >
@@ -291,48 +335,48 @@ function Clients() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1 md:col-span-2">
               <label className="text-[10px] font-bold text-slate-500 uppercase">Nome Completo *</label>
-              <input 
+              <input
                 required
                 type="text"
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all text-sm"
                 value={formData.name}
-                onChange={e => setFormData({...formData, name: e.target.value})}
+                onChange={e => setFormData({ ...formData, name: e.target.value })}
               />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-500 uppercase">CPF / CNPJ</label>
-              <input 
+              <input
                 type="text"
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
                 value={formData.tax_id}
-                onChange={e => setFormData({...formData, tax_id: e.target.value})}
+                onChange={e => setFormData({ ...formData, tax_id: e.target.value })}
                 placeholder="000.000.000-00"
               />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-500 uppercase">Telefone</label>
-              <input 
+              <input
                 type="text"
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
                 value={formData.phone}
-                onChange={e => setFormData({...formData, phone: e.target.value})}
+                onChange={e => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="(00) 00000-0000"
               />
             </div>
             <div className="space-y-1 md:col-span-2">
               <label className="text-[10px] font-bold text-slate-500 uppercase">E-mail</label>
-              <input 
+              <input
                 type="email"
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
                 value={formData.email}
-                onChange={e => setFormData({...formData, email: e.target.value})}
+                onChange={e => setFormData({ ...formData, email: e.target.value })}
                 placeholder="exemplo@email.com"
               />
             </div>
-            
+
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-500 uppercase">Data de Nascimento</label>
-              <input 
+              <input
                 type="text"
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
                 value={formData.birth_date}
@@ -342,55 +386,105 @@ function Clients() {
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-500 uppercase">Idade</label>
-              <input 
+              <input
                 type="text"
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
                 value={formData.age}
-                onChange={e => setFormData({...formData, age: e.target.value})}
+                onChange={e => setFormData({ ...formData, age: e.target.value })}
                 placeholder="Ex: 25 anos"
               />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-500 uppercase">Profissão</label>
-              <input 
+              <input
                 type="text"
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
                 value={formData.profession}
-                onChange={e => setFormData({...formData, profession: e.target.value})}
+                onChange={e => setFormData({ ...formData, profession: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-500 uppercase">CEP</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
+                value={formData.zip_code}
+                onChange={e => handleCepSearch(e.target.value)}
+                placeholder="00000-000"
+                maxLength={9}
+              />
+            </div>
+            <div className="space-y-1 md:col-span-2">
+              <label className="text-[10px] font-bold text-slate-500 uppercase">Rua</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
+                value={formData.street}
+                onChange={e => setFormData({ ...formData, street: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-500 uppercase">Número</label>
+              <input
+                id="numero-input"
+                type="text"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
+                value={formData.number}
+                onChange={e => setFormData({ ...formData, number: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-500 uppercase">Bairro</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
+                value={formData.neighborhood}
+                onChange={e => setFormData({ ...formData, neighborhood: e.target.value })}
               />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-500 uppercase">Cidade</label>
-              <input 
+              <input
                 type="text"
                 className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
                 value={formData.city}
-                onChange={e => setFormData({...formData, city: e.target.value})}
+                onChange={e => setFormData({ ...formData, city: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-500 uppercase">Estado</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
+                value={formData.state}
+                onChange={e => setFormData({ ...formData, state: e.target.value })}
+                placeholder="UF"
+                maxLength={2}
               />
             </div>
           </div>
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Endereço Completo</label>
-            <input 
+            <label className="text-[10px] font-bold text-slate-500 uppercase">Complemento</label>
+            <input
               type="text"
               className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
               value={formData.address}
-              onChange={e => setFormData({...formData, address: e.target.value})}
+              onChange={e => setFormData({ ...formData, address: e.target.value })}
             />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-slate-500 uppercase">Observações Internas</label>
-            <textarea 
+            <textarea
               rows={2}
               className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm resize-none"
               value={formData.notes}
-              onChange={e => setFormData({...formData, notes: e.target.value})}
+              onChange={e => setFormData({ ...formData, notes: e.target.value })}
             />
           </div>
           <div className="flex gap-4 pt-4">
             <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-4 font-bold text-slate-500 rounded-2xl">Cancelar</button>
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => handleSubmit()}
               className="flex-[2] py-4 bg-brand-primary text-white font-bold rounded-2xl shadow-lg shadow-teal-500/20 hover:scale-105 hover:bg-teal-700 transition-all duration-300"
             >
@@ -402,7 +496,7 @@ function Clients() {
 
 
 
-      <ClientMovementsModal 
+      <ClientMovementsModal
         isOpen={isMovementsModalOpen}
         onClose={() => setIsMovementsModalOpen(false)}
         client={selectedClientForDetails}

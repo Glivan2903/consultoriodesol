@@ -137,56 +137,94 @@ export default function MedicalRecordForm({ initialData, client, onSave, onCance
           </p>
           
           <h2 className="text-left text-lg font-normal text-slate-900 mt-4 md:mt-10 print:mt-6">PRONTUÁRIO</h2>
+          <div className="flex items-end gap-2 mt-2 print:mt-1 text-left">
+            <span className="text-sm font-bold text-slate-800 whitespace-nowrap print:text-[10px]">Data de admissão:</span>
+            <input 
+              type="date"
+              className="w-32 md:w-auto border-b border-slate-400 outline-none bg-transparent px-1 text-sm text-slate-900 font-bold print:text-[10px] print:pb-0"
+              value={formData.date}
+              onChange={(e: any) => setFormData({...formData, date: e.target.value})}
+            />
+          </div>
         </div>
 
         {/* 1. IDENTIFICAÇÃO DO PACIENTE */}
         <div className="print:break-inside-avoid">
-          <h2 className="text-base md:text-lg font-bold text-slate-900 uppercase border-b-0 pb-2 mb-4 mt-8 flex gap-2">
+          <h2 className="text-base md:text-lg font-bold text-slate-900 uppercase border-b-0 pb-2 mb-4 mt-8 flex gap-2 print:mt-2 print:mb-1 print:pb-0 print:text-sm">
             <span>1.</span> IDENTIFICAÇÃO DO PACIENTE
           </h2>
-          <div className="flex flex-col gap-4 mb-8 print:gap-2 print:mb-4">
-            <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col gap-4 mb-8 print:gap-1 print:mb-2">
+            <div className="flex flex-col md:flex-row print:flex-row gap-4 print:gap-2">
               <div className="flex items-end gap-2 flex-[2]">
-                <span className="text-sm font-bold text-slate-800">Nome:</span>
-                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">{client?.name || ''}</div>
+                <span className="text-sm font-bold text-slate-800 print:text-[10px]">Nome:</span>
+                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.name || ''}</div>
               </div>
               <div className="flex items-end gap-2 flex-1">
-                <span className="text-sm font-bold text-slate-800 whitespace-nowrap">Data nasc:</span>
-                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">{client?.birth_date || '____/____/____'}</div>
+                <span className="text-sm font-bold text-slate-800 whitespace-nowrap print:text-[10px]">Data nasc:</span>
+                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.birth_date || '____/____/____'}</div>
               </div>
-              <div className="flex items-end gap-2 flex-1">
-                <span className="text-sm font-bold text-slate-800">Idade:</span>
-                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">{client?.age || ''}</div>
-              </div>
-              <div className="flex items-end gap-2 flex-1">
-                <span className="text-sm font-bold text-slate-800">Profissão:</span>
-                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">{client?.profession || ''}</div>
+              <div className="flex items-end gap-2 flex-[0.5]">
+                <span className="text-sm font-bold text-slate-800 print:text-[10px]">Idade:</span>
+                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.age || ''}</div>
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4 mt-2">
+            <div className="flex flex-col md:flex-row print:flex-row gap-4 mt-2 print:mt-0 print:gap-2">
               <div className="flex items-end gap-2 flex-1">
-                <span className="text-sm font-bold text-slate-800">CPF:</span>
-                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">{client?.tax_id || ''}</div>
+                <span className="text-sm font-bold text-slate-800 print:text-[10px]">CPF:</span>
+                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.tax_id || ''}</div>
               </div>
               <div className="flex items-end gap-2 flex-1">
-                <span className="text-sm font-bold text-slate-800">Cidade:</span>
-                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">{client?.city || ''}</div>
+                <span className="text-sm font-bold text-slate-800 print:text-[10px]">Profissão:</span>
+                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.profession || ''}</div>
               </div>
               <div className="flex items-end gap-2 flex-1">
-                <span className="text-sm font-bold text-slate-800">Telefone:</span>
-                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900">{client?.phone || ''}</div>
-              </div>
-              <div className="flex items-end gap-2 flex-1">
-                <span className="text-sm font-bold text-slate-800 whitespace-nowrap">Data de admissão:</span>
-                <input 
-                  type="date"
-                  className="flex-1 border-b border-slate-400 outline-none bg-transparent px-1 text-sm text-slate-900 font-bold"
-                  value={formData.date}
-                  onChange={(e: any) => setFormData({...formData, date: e.target.value})}
-                />
+                <span className="text-sm font-bold text-slate-800 print:text-[10px]">Telefone:</span>
+                <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.phone || ''}</div>
               </div>
             </div>
+
+            {client?.street || client?.zip_code ? (
+              <>
+                <div className="flex flex-col md:flex-row print:flex-row gap-4 mt-2 print:mt-0 print:gap-2">
+                  <div className="flex items-end gap-2 flex-[2]">
+                    <span className="text-sm font-bold text-slate-800 print:text-[10px]">Rua:</span>
+                    <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.street || ''}</div>
+                  </div>
+                  <div className="flex items-end gap-2 flex-1">
+                    <span className="text-sm font-bold text-slate-800 print:text-[10px]">Nº:</span>
+                    <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.number || ''}</div>
+                  </div>
+                  <div className="flex items-end gap-2 flex-1">
+                    <span className="text-sm font-bold text-slate-800 print:text-[10px]">CEP:</span>
+                    <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.zip_code || ''}</div>
+                  </div>
+                </div>
+                <div className="flex flex-col md:flex-row print:flex-row gap-4 mt-2 print:mt-0 print:gap-2">
+                  <div className="flex items-end gap-2 flex-[1.5]">
+                    <span className="text-sm font-bold text-slate-800 print:text-[10px]">Bairro:</span>
+                    <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.neighborhood || ''}</div>
+                  </div>
+                  <div className="flex items-end gap-2 flex-[1.5]">
+                    <span className="text-sm font-bold text-slate-800 print:text-[10px]">Cidade:</span>
+                    <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.city || ''}</div>
+                  </div>
+                  <div className="flex items-end gap-2 flex-1">
+                    <span className="text-sm font-bold text-slate-800 print:text-[10px]">Estado:</span>
+                    <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">{client?.state || ''}</div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col md:flex-row print:flex-row gap-4 mt-2 print:mt-0 print:gap-2">
+                <div className="flex items-end gap-2 flex-1">
+                  <span className="text-sm font-bold text-slate-800 whitespace-nowrap print:text-[10px]">Endereço:</span>
+                  <div className="flex-1 border-b border-slate-400 pb-1 px-2 text-sm text-slate-900 print:text-[10px] print:pb-0">
+                    {[client?.address, client?.city].filter(Boolean).join(', ')}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

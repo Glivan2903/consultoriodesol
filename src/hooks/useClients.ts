@@ -13,7 +13,12 @@ export interface Client {
   birth_date: string | null;
   age: string | null;
   profession: string | null;
+  zip_code: string | null;
+  street: string | null;
+  number: string | null;
+  neighborhood: string | null;
   city: string | null;
+  state: string | null;
 }
 
 export function useClients() {

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Users, 
-  Search, 
-  Calendar, 
-  FileText, 
-  Plus, 
-  ChevronRight, 
+import {
+  Users,
+  Search,
+  Calendar,
+  FileText,
+  Plus,
+  ChevronRight,
   History,
   ClipboardList,
   ArrowLeft,
@@ -33,6 +33,11 @@ export default function MedicalRecords() {
     phone: '',
     email: '',
     address: '',
+    zip_code: '',
+    street: '',
+    number: '',
+    neighborhood: '',
+    state: '',
     notes: '',
     birth_date: '',
     age: '',
@@ -62,8 +67,8 @@ export default function MedicalRecords() {
     }
   }, [clientId, clients, location.search]);
 
-  const filteredClients = clients.filter(c => 
-    c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredClients = clients.filter(c =>
+    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.tax_id?.includes(searchTerm)
   );
 
@@ -96,30 +101,40 @@ export default function MedicalRecords() {
   };
 
   const handleOpenCreateClient = () => {
-    setClientFormData({ 
-      name: '', 
-      tax_id: '', 
-      phone: '', 
-      email: '', 
-      address: '', 
-      notes: '', 
-      birth_date: '', 
-      age: '', 
-      profession: '', 
-      city: '' 
+    setClientFormData({
+      name: '',
+      tax_id: '',
+      phone: '',
+      email: '',
+      address: '',
+      zip_code: '',
+      street: '',
+      number: '',
+      neighborhood: '',
+      state: '',
+      notes: '',
+      birth_date: '',
+      age: '',
+      profession: '',
+      city: ''
     });
     setIsClientModalOpen(true);
   };
 
   const handleSubmitClient = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    
+
     const dataToSave = {
       ...clientFormData,
       tax_id: clientFormData.tax_id?.trim() || null,
       phone: clientFormData.phone?.trim() || null,
       email: clientFormData.email?.trim() || null,
       address: clientFormData.address?.trim() || null,
+      zip_code: clientFormData.zip_code?.trim() || null,
+      street: clientFormData.street?.trim() || null,
+      number: clientFormData.number?.trim() || null,
+      neighborhood: clientFormData.neighborhood?.trim() || null,
+      state: clientFormData.state?.trim() || null,
       notes: clientFormData.notes?.trim() || null,
       birth_date: clientFormData.birth_date?.trim() || null,
       age: clientFormData.age?.trim() || null,
@@ -131,7 +146,7 @@ export default function MedicalRecords() {
       const newClient = await addClient(dataToSave as any);
       showSuccess('Paciente Salvo', 'O novo paciente foi adicionado.');
       setIsClientModalOpen(false);
-      
+
       // Inicia automaticamente o prontuário para o novo cliente
       setSelectedClient(newClient);
       setEditingRecord(null);
@@ -147,7 +162,7 @@ export default function MedicalRecords() {
     let formatted = digits;
     if (digits.length > 2) formatted = `${digits.slice(0, 2)}/${digits.slice(2)}`;
     if (digits.length > 4) formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
-    
+
     let age = clientFormData.age;
     if (formatted.length === 10) {
       const [d, m, y] = formatted.split('/').map(Number);
@@ -162,7 +177,7 @@ export default function MedicalRecords() {
         age = calculatedAge >= 0 ? `${calculatedAge} anos` : '';
       }
     }
-    
+
     setClientFormData({
       ...clientFormData,
       birth_date: formatted,
@@ -170,18 +185,46 @@ export default function MedicalRecords() {
     });
   };
 
+  const handleCepSearch = async (cep: string) => {
+    const cleanCep = cep.replace(/\D/g, '');
+    setClientFormData(prev => ({ ...prev, zip_code: cleanCep }));
+
+    if (cleanCep.length === 8) {
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await response.json();
+
+        if (!data.erro) {
+          setClientFormData(prev => ({
+            ...prev,
+            street: data.logradouro || prev.street,
+            neighborhood: data.bairro || prev.neighborhood,
+            city: data.localidade || prev.city,
+            state: data.uf || prev.state,
+          }));
+
+          setTimeout(() => {
+            document.getElementById('numero-input')?.focus();
+          }, 100);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
+      }
+    }
+  };
+
   // ESTADO 3: FORMULÁRIO EM TELA CHEIA
   if (selectedClient && currentView === 'form') {
     return (
       <div className="h-[calc(100vh-120px)] animate-in fade-in slide-in-from-bottom-2 duration-500 bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden flex flex-col relative print:h-auto print:overflow-visible print:border-none print:shadow-none print:rounded-none print:bg-transparent">
-        <button 
+        <button
           onClick={handleCancelForm}
           className="absolute top-4 left-4 z-50 flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-xl text-slate-500 hover:text-slate-900 font-bold shadow-sm border border-slate-200 transition-all hover:scale-105 print:hidden"
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar
         </button>
-        <MedicalRecordForm 
+        <MedicalRecordForm
           initialData={editingRecord}
           client={selectedClient}
           onSave={handleSaveRecord}
@@ -196,7 +239,7 @@ export default function MedicalRecords() {
     return (
       <div className="h-[calc(100vh-120px)] flex flex-col gap-6 animate-in fade-in slide-in-from-right-4 duration-500">
         <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-          <button 
+          <button
             onClick={() => {
               setSelectedClient(null);
               navigate('/prontuarios');
@@ -220,10 +263,18 @@ export default function MedicalRecords() {
                 <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">CPF: {selectedClient.tax_id || 'N/I'}</p>
                 <span className="hidden sm:block w-1 h-1 bg-slate-300 rounded-full" />
                 <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">{selectedClient.phone || 'Sem fone'}</p>
+                {(selectedClient.street || selectedClient.address || selectedClient.city) && (
+                  <>
+                    <span className="hidden sm:block w-1 h-1 bg-slate-300 rounded-full" />
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">
+                      {selectedClient.street ? `${selectedClient.street}, ${selectedClient.number || 'S/N'} - ${selectedClient.neighborhood || ''}, ${selectedClient.city || ''} - ${selectedClient.state || ''}` : [selectedClient.address, selectedClient.city].filter(Boolean).join(', ')}
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => {
               setEditingRecord(null);
               setCurrentView('form');
@@ -258,8 +309,8 @@ export default function MedicalRecords() {
             ) : (
               <div className="flex flex-col gap-3">
                 {records.map(record => (
-                  <div 
-                    key={record.id} 
+                  <div
+                    key={record.id}
                     className="group bg-white hover:bg-slate-50 shadow-sm hover:shadow-md border border-slate-200 hover:border-brand-primary/30 p-3 sm:p-4 rounded-2xl transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
                     onClick={() => {
                       setEditingRecord(record);
@@ -279,7 +330,7 @@ export default function MedicalRecords() {
                           <span className="hidden sm:inline">/{new Date(record.date).getFullYear()}</span>
                         </p>
                       </div>
-                      
+
                       <div className="flex-1 bg-slate-50 p-2 sm:p-3 rounded-xl border border-slate-100 min-w-0 ml-auto sm:ml-0">
                         <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase mb-0.5 sm:mb-1 truncate">Queixa:</p>
                         <h4 className="text-xs sm:text-sm font-medium text-slate-800 truncate">
@@ -310,15 +361,15 @@ export default function MedicalRecords() {
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <div className="relative w-full md:w-80">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Buscar paciente por nome ou CPF..." 
+            <input
+              type="text"
+              placeholder="Buscar paciente por nome ou CPF..."
               className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all shadow-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button 
+          <button
             onClick={handleOpenCreateClient}
             className="w-full md:w-auto flex items-center justify-center gap-2 bg-brand-primary text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover:scale-105 active:scale-95 transition-all whitespace-nowrap"
           >
@@ -376,23 +427,24 @@ export default function MedicalRecords() {
           )}
         </div>
       </div>
-      
-      <ClientModal 
+
+      <ClientModal
         isOpen={isClientModalOpen}
         onClose={() => setIsClientModalOpen(false)}
         formData={clientFormData}
         setFormData={setClientFormData}
         onSubmit={handleSubmitClient}
         onBirthDateChange={handleBirthDateChange}
+        onCepSearch={handleCepSearch}
       />
     </div>
   );
 }
 
-function ClientModal({ isOpen, onClose, formData, setFormData, onSubmit, onBirthDateChange }: any) {
+function ClientModal({ isOpen, onClose, formData, setFormData, onSubmit, onBirthDateChange, onCepSearch }: any) {
   return (
-    <Modal 
-      isOpen={isOpen} 
+    <Modal
+      isOpen={isOpen}
       onClose={onClose}
       title="Novo Paciente"
     >
@@ -400,48 +452,48 @@ function ClientModal({ isOpen, onClose, formData, setFormData, onSubmit, onBirth
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1 md:col-span-2">
             <label className="text-[10px] font-bold text-slate-500 uppercase">Nome Completo *</label>
-            <input 
+            <input
               required
               type="text"
               className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all text-sm"
               value={formData.name}
-              onChange={e => setFormData({...formData, name: e.target.value})}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
             />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-slate-500 uppercase">CPF / CNPJ</label>
-            <input 
+            <input
               type="text"
               className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
               value={formData.tax_id}
-              onChange={e => setFormData({...formData, tax_id: e.target.value})}
+              onChange={e => setFormData({ ...formData, tax_id: e.target.value })}
               placeholder="000.000.000-00"
             />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-slate-500 uppercase">Telefone</label>
-            <input 
+            <input
               type="text"
               className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
               value={formData.phone}
-              onChange={e => setFormData({...formData, phone: e.target.value})}
+              onChange={e => setFormData({ ...formData, phone: e.target.value })}
               placeholder="(00) 00000-0000"
             />
           </div>
           <div className="space-y-1 md:col-span-2">
             <label className="text-[10px] font-bold text-slate-500 uppercase">E-mail</label>
-            <input 
+            <input
               type="email"
               className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
               value={formData.email}
-              onChange={e => setFormData({...formData, email: e.target.value})}
+              onChange={e => setFormData({ ...formData, email: e.target.value })}
               placeholder="exemplo@email.com"
             />
           </div>
-          
+
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-slate-500 uppercase">Data de Nascimento</label>
-            <input 
+            <input
               type="text"
               className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
               value={formData.birth_date}
@@ -451,54 +503,104 @@ function ClientModal({ isOpen, onClose, formData, setFormData, onSubmit, onBirth
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-slate-500 uppercase">Idade</label>
-            <input 
+            <input
               type="text"
               className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
               value={formData.age}
-              onChange={e => setFormData({...formData, age: e.target.value})}
+              onChange={e => setFormData({ ...formData, age: e.target.value })}
               placeholder="Ex: 25 anos"
             />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-slate-500 uppercase">Profissão</label>
-            <input 
+            <input
               type="text"
               className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
               value={formData.profession}
-              onChange={e => setFormData({...formData, profession: e.target.value})}
+              onChange={e => setFormData({ ...formData, profession: e.target.value })}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">CEP</label>
+            <input
+              type="text"
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
+              value={formData.zip_code}
+              onChange={e => onCepSearch(e.target.value)}
+              placeholder="00000-000"
+              maxLength={9}
+            />
+          </div>
+          <div className="space-y-1 md:col-span-2">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">Rua</label>
+            <input
+              type="text"
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
+              value={formData.street}
+              onChange={e => setFormData({ ...formData, street: e.target.value })}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">Número</label>
+            <input
+              id="numero-input"
+              type="text"
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
+              value={formData.number}
+              onChange={e => setFormData({ ...formData, number: e.target.value })}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">Bairro</label>
+            <input
+              type="text"
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
+              value={formData.neighborhood}
+              onChange={e => setFormData({ ...formData, neighborhood: e.target.value })}
             />
           </div>
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-slate-500 uppercase">Cidade</label>
-            <input 
+            <input
               type="text"
               className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
               value={formData.city}
-              onChange={e => setFormData({...formData, city: e.target.value})}
+              onChange={e => setFormData({ ...formData, city: e.target.value })}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">Estado</label>
+            <input
+              type="text"
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
+              value={formData.state}
+              onChange={e => setFormData({ ...formData, state: e.target.value })}
+              placeholder="UF"
+              maxLength={2}
             />
           </div>
         </div>
         <div className="space-y-1">
-          <label className="text-[10px] font-bold text-slate-500 uppercase">Endereço Completo</label>
-          <input 
+          <label className="text-[10px] font-bold text-slate-500 uppercase">Complemento</label>
+          <input
             type="text"
             className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
             value={formData.address}
-            onChange={e => setFormData({...formData, address: e.target.value})}
+            onChange={e => setFormData({ ...formData, address: e.target.value })}
           />
         </div>
         <div className="space-y-1">
           <label className="text-[10px] font-bold text-slate-500 uppercase">Observações Internas</label>
-          <textarea 
+          <textarea
             rows={2}
             className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm resize-none"
             value={formData.notes}
-            onChange={e => setFormData({...formData, notes: e.target.value})}
+            onChange={e => setFormData({ ...formData, notes: e.target.value })}
           />
         </div>
         <div className="flex gap-4 pt-4">
           <button type="button" onClick={onClose} className="flex-1 py-4 font-bold text-slate-500 rounded-2xl">Cancelar</button>
-          <button 
+          <button
             type="submit"
             className="flex-[2] py-4 bg-brand-primary text-white font-bold rounded-2xl shadow-lg shadow-teal-500/20 hover:scale-105 hover:bg-teal-700 transition-all duration-300"
           >
@@ -512,13 +614,13 @@ function ClientModal({ isOpen, onClose, formData, setFormData, onSubmit, onBirth
 
 function UserIcon({ className }: { className?: string }) {
   return (
-    <svg 
-      className={className} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
       strokeLinejoin="round"
     >
       <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
