@@ -29,6 +29,16 @@ export default function Modal({ isOpen, onClose, title, children, size = '2xl' }
 
   if (!isOpen) return null;
 
+  const maxWidthMap = {
+    'md': 'max-w-md',
+    'lg': 'max-w-lg',
+    'xl': 'max-w-xl',
+    '2xl': 'max-w-2xl',
+    '3xl': 'max-w-3xl',
+    '4xl': 'max-w-4xl',
+    '5xl': 'max-w-5xl',
+  };
+
   return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Overlay */}
@@ -40,7 +50,7 @@ export default function Modal({ isOpen, onClose, title, children, size = '2xl' }
       {/* Content */}
       <div 
         ref={modalRef}
-        className={`bg-white rounded-[2rem] shadow-2xl w-full max-w-${size} max-h-[90vh] overflow-hidden relative z-10 animate-in zoom-in-95 fade-in duration-300 border border-white/20`}
+        className={`bg-white rounded-[2rem] shadow-2xl w-full ${maxWidthMap[size]} max-h-[90vh] overflow-hidden relative z-10 animate-in zoom-in-95 fade-in duration-300 border border-white/20`}
       >
         <div className="flex items-center justify-between p-5 md:p-8 pb-4 border-b border-slate-100">
           <h2 className="text-lg md:text-xl font-bold text-slate-900">{title}</h2>

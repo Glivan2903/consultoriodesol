@@ -16,7 +16,9 @@ import { useClients, Client } from '../hooks/useClients';
 import { useMedicalRecords } from '../hooks/useMedicalRecords';
 import { useFeedback } from '../context/FeedbackContext';
 import MedicalRecordForm from '../components/MedicalRecordForm';
-import Modal from '../components/Modal';
+import ClientModal from '../components/modals/ClientModal';
+import { Input } from '../components/ui/Input';
+import { Button } from '../components/ui/Button';
 import { clsx } from 'clsx';
 
 export default function MedicalRecords() {
@@ -27,23 +29,6 @@ export default function MedicalRecords() {
   const [editingRecord, setEditingRecord] = useState<any>(null);
 
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
-  const [clientFormData, setClientFormData] = useState({
-    name: '',
-    tax_id: '',
-    phone: '',
-    email: '',
-    address: '',
-    zip_code: '',
-    street: '',
-    number: '',
-    neighborhood: '',
-    state: '',
-    notes: '',
-    birth_date: '',
-    age: '',
-    profession: '',
-    city: ''
-  });
 
   const { records, loading: loadingRecords, addRecord, updateRecord } = useMedicalRecords(selectedClient?.id);
   const { showSuccess, showError } = useFeedback();
@@ -101,49 +86,12 @@ export default function MedicalRecords() {
   };
 
   const handleOpenCreateClient = () => {
-    setClientFormData({
-      name: '',
-      tax_id: '',
-      phone: '',
-      email: '',
-      address: '',
-      zip_code: '',
-      street: '',
-      number: '',
-      neighborhood: '',
-      state: '',
-      notes: '',
-      birth_date: '',
-      age: '',
-      profession: '',
-      city: ''
-    });
     setIsClientModalOpen(true);
   };
 
-  const handleSubmitClient = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-
-    const dataToSave = {
-      ...clientFormData,
-      tax_id: clientFormData.tax_id?.trim() || null,
-      phone: clientFormData.phone?.trim() || null,
-      email: clientFormData.email?.trim() || null,
-      address: clientFormData.address?.trim() || null,
-      zip_code: clientFormData.zip_code?.trim() || null,
-      street: clientFormData.street?.trim() || null,
-      number: clientFormData.number?.trim() || null,
-      neighborhood: clientFormData.neighborhood?.trim() || null,
-      state: clientFormData.state?.trim() || null,
-      notes: clientFormData.notes?.trim() || null,
-      birth_date: clientFormData.birth_date?.trim() || null,
-      age: clientFormData.age?.trim() || null,
-      profession: clientFormData.profession?.trim() || null,
-      city: clientFormData.city?.trim() || null,
-    };
-
+  const handleSubmitClient = async (formData: any) => {
     try {
-      const newClient = await addClient(dataToSave as any);
+      const newClient = await addClient(formData);
       showSuccess('Paciente Salvo', 'O novo paciente foi adicionado.');
       setIsClientModalOpen(false);
 
@@ -153,63 +101,6 @@ export default function MedicalRecords() {
       setCurrentView('form');
     } catch (err: any) {
       showError('Erro ao salvar paciente', err.message);
-    }
-  };
-
-  const handleBirthDateChange = (val: string) => {
-    // Formata DD/MM/AAAA
-    const digits = val.replace(/\D/g, '').slice(0, 8);
-    let formatted = digits;
-    if (digits.length > 2) formatted = `${digits.slice(0, 2)}/${digits.slice(2)}`;
-    if (digits.length > 4) formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
-
-    let age = clientFormData.age;
-    if (formatted.length === 10) {
-      const [d, m, y] = formatted.split('/').map(Number);
-      const birth = new Date(y, m - 1, d);
-      if (!isNaN(birth.getTime())) {
-        const today = new Date();
-        let calculatedAge = today.getFullYear() - birth.getFullYear();
-        const monthDiff = today.getMonth() - birth.getMonth();
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-          calculatedAge--;
-        }
-        age = calculatedAge >= 0 ? `${calculatedAge} anos` : '';
-      }
-    }
-
-    setClientFormData({
-      ...clientFormData,
-      birth_date: formatted,
-      age: age
-    });
-  };
-
-  const handleCepSearch = async (cep: string) => {
-    const cleanCep = cep.replace(/\D/g, '');
-    setClientFormData(prev => ({ ...prev, zip_code: cleanCep }));
-
-    if (cleanCep.length === 8) {
-      try {
-        const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
-        const data = await response.json();
-
-        if (!data.erro) {
-          setClientFormData(prev => ({
-            ...prev,
-            street: data.logradouro || prev.street,
-            neighborhood: data.bairro || prev.neighborhood,
-            city: data.localidade || prev.city,
-            state: data.uf || prev.state,
-          }));
-
-          setTimeout(() => {
-            document.getElementById('numero-input')?.focus();
-          }, 100);
-        }
-      } catch (error) {
-        console.error('Erro ao buscar CEP:', error);
-      }
     }
   };
 
@@ -244,11 +135,24 @@ export default function MedicalRecords() {
               setSelectedClient(null);
               navigate('/prontuarios');
             }}
-            className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 bg-white rounded-xl shadow-sm border border-slate-200 text-slate-500 hover:text-slate-900 hover:scale-105 transition-all"
+            className="flex items-center justify-center w-10 h-10 bg-white rounded-xl shadow-sm border border-slate-200 text-slate-500 hover:text-slate-900 hover:scale-105 transition-all"
           >
-            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Histórico do Paciente</h1>
+          <div className="flex-1">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">Prontuários</h2>
+            <p className="text-slate-500 text-sm hidden sm:block truncate">Histórico clínico de {selectedClient.name}</p>
+          </div>
+          <Button
+            onClick={() => {
+              setEditingRecord(null);
+              setCurrentView('form');
+            }}
+            icon={<Plus className="w-5 h-5" />}
+          >
+            <span className="hidden sm:inline">Novo Registro</span>
+            <span className="sm:hidden">Novo</span>
+          </Button>
         </div>
 
         {/* Card do Cliente Topo */}
@@ -274,16 +178,6 @@ export default function MedicalRecords() {
               </div>
             </div>
           </div>
-          <button
-            onClick={() => {
-              setEditingRecord(null);
-              setCurrentView('form');
-            }}
-            className="flex items-center justify-center gap-2 bg-brand-primary text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover:scale-105 active:scale-95 transition-all text-sm sm:text-base w-full sm:w-auto"
-          >
-            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-            Novo Prontuário
-          </button>
         </div>
 
         {/* Lista de Prontuários Abaixo */}
@@ -358,25 +252,21 @@ export default function MedicalRecords() {
           <h1 className="text-2xl font-bold text-slate-900">Prontuários</h1>
           <p className="text-slate-500 text-sm">Selecione um paciente para acessar ou criar novos prontuários médicos.</p>
         </div>
-        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Buscar paciente por nome ou CPF..."
-              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all shadow-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <button
-            onClick={handleOpenCreateClient}
-            className="w-full md:w-auto flex items-center justify-center gap-2 bg-brand-primary text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-teal-500/20 hover:scale-105 active:scale-95 transition-all whitespace-nowrap"
-          >
-            <Plus className="w-5 h-5" />
-            Adicionar Paciente
-          </button>
+        <div className="flex flex-col md:flex-row items-center gap-4">
+          <Button onClick={handleOpenCreateClient} icon={<Plus className="w-5 h-5" />}>
+            <span className="hidden sm:inline">Novo Paciente</span>
+            <span className="sm:hidden">Novo</span>
+          </Button>
         </div>
+      </div>
+
+      <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm shrink-0">
+        <Input
+          icon={<Search className="w-5 h-5" />}
+          placeholder="Buscar paciente por nome ou CPF..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
       <div className="flex-1 bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
@@ -431,187 +321,11 @@ export default function MedicalRecords() {
       <ClientModal
         isOpen={isClientModalOpen}
         onClose={() => setIsClientModalOpen(false)}
-        formData={clientFormData}
-        setFormData={setClientFormData}
-        onSubmit={handleSubmitClient}
-        onBirthDateChange={handleBirthDateChange}
-        onCepSearch={handleCepSearch}
+        onSave={handleSubmitClient}
       />
     </div>
   );
 }
-
-function ClientModal({ isOpen, onClose, formData, setFormData, onSubmit, onBirthDateChange, onCepSearch }: any) {
-  return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Novo Paciente"
-    >
-      <form onSubmit={onSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1 md:col-span-2">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Nome Completo *</label>
-            <input
-              required
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-primary/20 transition-all text-sm"
-              value={formData.name}
-              onChange={e => setFormData({ ...formData, name: e.target.value })}
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">CPF / CNPJ</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.tax_id}
-              onChange={e => setFormData({ ...formData, tax_id: e.target.value })}
-              placeholder="000.000.000-00"
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Telefone</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.phone}
-              onChange={e => setFormData({ ...formData, phone: e.target.value })}
-              placeholder="(00) 00000-0000"
-            />
-          </div>
-          <div className="space-y-1 md:col-span-2">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">E-mail</label>
-            <input
-              type="email"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.email}
-              onChange={e => setFormData({ ...formData, email: e.target.value })}
-              placeholder="exemplo@email.com"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Data de Nascimento</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.birth_date}
-              onChange={e => onBirthDateChange(e.target.value)}
-              placeholder="DD/MM/AAAA"
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Idade</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.age}
-              onChange={e => setFormData({ ...formData, age: e.target.value })}
-              placeholder="Ex: 25 anos"
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Profissão</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.profession}
-              onChange={e => setFormData({ ...formData, profession: e.target.value })}
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">CEP</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.zip_code}
-              onChange={e => onCepSearch(e.target.value)}
-              placeholder="00000-000"
-              maxLength={9}
-            />
-          </div>
-          <div className="space-y-1 md:col-span-2">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Rua</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.street}
-              onChange={e => setFormData({ ...formData, street: e.target.value })}
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Número</label>
-            <input
-              id="numero-input"
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.number}
-              onChange={e => setFormData({ ...formData, number: e.target.value })}
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Bairro</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.neighborhood}
-              onChange={e => setFormData({ ...formData, neighborhood: e.target.value })}
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Cidade</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.city}
-              onChange={e => setFormData({ ...formData, city: e.target.value })}
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Estado</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-              value={formData.state}
-              onChange={e => setFormData({ ...formData, state: e.target.value })}
-              placeholder="UF"
-              maxLength={2}
-            />
-          </div>
-        </div>
-        <div className="space-y-1">
-          <label className="text-[10px] font-bold text-slate-500 uppercase">Complemento</label>
-          <input
-            type="text"
-            className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"
-            value={formData.address}
-            onChange={e => setFormData({ ...formData, address: e.target.value })}
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-[10px] font-bold text-slate-500 uppercase">Observações Internas</label>
-          <textarea
-            rows={2}
-            className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm resize-none"
-            value={formData.notes}
-            onChange={e => setFormData({ ...formData, notes: e.target.value })}
-          />
-        </div>
-        <div className="flex gap-4 pt-4">
-          <button type="button" onClick={onClose} className="flex-1 py-4 font-bold text-slate-500 rounded-2xl">Cancelar</button>
-          <button
-            type="submit"
-            className="flex-[2] py-4 bg-brand-primary text-white font-bold rounded-2xl shadow-lg shadow-teal-500/20 hover:scale-105 hover:bg-teal-700 transition-all duration-300"
-          >
-            Salvar e Iniciar Prontuário
-          </button>
-        </div>
-      </form>
-    </Modal>
-  );
-}
-
 function UserIcon({ className }: { className?: string }) {
   return (
     <svg
